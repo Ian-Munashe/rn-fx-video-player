@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   View,
   Text,
@@ -10,6 +9,7 @@ import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialIcons, Octicons } from '@expo/vector-icons';
 
+import Utils from '../utils';
 import IconButton from './IconButton';
 import ErrorComponent from './ErrorComponent';
 import { useVideoPlayerContext } from '../hooks/useVideoPlayerContext';
@@ -19,11 +19,12 @@ type PlayerControlsProps = {
   videoRef: React.MutableRefObject<any>;
   handleNextTrack: () => void;
   handleReload: () => void;
+  onValueChange: () => void;
   handleToggleMute: () => void;
   handleTogglePlay: () => void;
+  handleFullScreen: () => void;
   handlePreviousTrack: () => void;
   handleSlidingStart: () => void;
-  handleFullScreen: () => void;
   handleSlidingComplete: (e: number, duration: number) => void;
 };
 
@@ -61,10 +62,13 @@ const Controls: React.FC<PlayerControlsProps> = (props) => {
                 {!props.isLive && (
                   <Slider
                     value={playback.positionMillis / playback.durationMillis!}
-                    thumbTintColor={props.isLive ? 'transparent' : 'white'}
+                    minimumValue={0}
+                    maximumValue={1}
+                    thumbTintColor={'white'}
                     minimumTrackTintColor="white"
                     maximumTrackTintColor={'white'}
                     onSlidingStart={props.handleSlidingStart}
+                    onValueChange={props.onValueChange}
                     onSlidingComplete={async (e) =>
                       props.handleSlidingComplete(
                         e,
@@ -85,13 +89,13 @@ const Controls: React.FC<PlayerControlsProps> = (props) => {
                         style={{ flexDirection: 'row', alignItems: 'center' }}
                       >
                         <Text style={styles.text}>
-                          {formatTime(playback.positionMillis)}
+                          {Utils.formatTime(playback.positionMillis)}
                         </Text>
                         <Text style={[styles.text, { marginHorizontal: 4 }]}>
                           /
                         </Text>
                         <Text style={styles.text}>
-                          {formatTime(playback.durationMillis)}
+                          {Utils.formatTime(playback.durationMillis)}
                         </Text>
                       </View>
                     )}
@@ -167,14 +171,6 @@ const renderLeftControls = (
       />
     </View>
   );
-};
-
-const formatTime = (milliseconds: number | undefined): string => {
-  if (milliseconds === undefined) return '00:00';
-  const totalSeconds = Math.floor(milliseconds / 1000);
-  const seconds = String(totalSeconds % 60).padStart(2, '0');
-  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-  return `${minutes}:${seconds}`;
 };
 
 const styles = StyleSheet.create({

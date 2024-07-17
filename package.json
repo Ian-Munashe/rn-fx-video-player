@@ -84,8 +84,8 @@
   },
   "peerDependencies": {
     "@expo/vector-icons": "^14.0.2",
-    "react": "*",
-    "react-native": "*"
+    "react": "^18.2.0",
+    "react-native": "^0.74.3"
   },
   "workspaces": [
     "example"

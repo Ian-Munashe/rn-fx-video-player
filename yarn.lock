@@ -13300,8 +13300,8 @@ __metadata:
     typescript: ^5.2.2
   peerDependencies:
     "@expo/vector-icons": ^14.0.2
-    react: "*"
-    react-native: "*"
+    react: ^18.2.0
+    react-native: ^0.74.3
   languageName: unknown
   linkType: soft
 

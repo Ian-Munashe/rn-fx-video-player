@@ -10,14 +10,19 @@ export const useVideoPlayer = (
   const timeoutRef = React.useRef<any>(null);
   const controlsAnimation = React.useRef(new Animated.Value(1)).current;
 
+  const [isLive, setIsLive] = React.useState<boolean>(false);
   const [isMuted, setMuted] = React.useState<boolean>(false);
-  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [showControls, setShowControls] = React.useState<boolean>(false);
 
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string>('');
   const [source, setSource] = React.useState<string | any>(sources[0]);
   const [playback, setPlayback] = React.useState<AVPlaybackStatusSuccess>();
+
+  React.useEffect(() => {
+    setIsLive(source.startsWith('rtmp://') || source.includes('.m3u8'));
+  }, [source]);
 
   React.useEffect(() => {
     if (showControls) showControlsAnimation();
@@ -66,11 +71,14 @@ export const useVideoPlayer = (
   const handleVideoReload = async () => {
     if (!Video.current) return setError('video reference is null');
     try {
-      const status = await Video.current.getStatusAsync();
-      Video.current.setStatusAsync(status);
-      Video.current.playAsync();
+      setError('');
       setIsLoading(true);
-      setError(null);
+      const status = await Video.current.getStatusAsync();
+      await Video.current.unloadAsync();
+      if (status.isLoaded) {
+        await Video.current.loadAsync({ uri: source });
+        await Video.current.playFromPositionAsync(status.positionMillis ?? 0);
+      }
     } catch (error: any) {
       setError(error.message);
     }
@@ -105,13 +113,15 @@ export const useVideoPlayer = (
   const handlePlaybackStatusUpdate = (playbackStatus: AVPlaybackStatus) => {
     if (playbackStatus.isLoaded) {
       setPlayback(playbackStatus);
-      setIsLoading(!playbackStatus.isPlaying);
+      setIsLoading(!playbackStatus.shouldPlay && playbackStatus.isPlaying);
       if (playbackStatus.didJustFinish) handleNextTrack();
+      setIsLoading(!playbackStatus.isPlaying && playbackStatus.shouldPlay);
     }
   };
 
   return {
     isMuted,
+    isLive,
     source,
     playback: playback!,
     isPlaying,
@@ -132,5 +142,6 @@ export const useVideoPlayer = (
     handleNextTrack,
     handlePreviousTrack,
     handlePlaybackStatusUpdate,
+    resetControlsTimeout,
   };
 };

@@ -1,35 +1,31 @@
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
 import { ResizeMode, Video } from 'expo-av';
 import { captureRef } from 'react-native-view-shot';
+import { Pressable, StyleSheet } from 'react-native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 import Controls from './Controls';
-import { VideoPlayerContext } from '../context';
 import { useVideoPlayer } from '../hooks';
-
-import * as ScreenOrientation from 'expo-screen-orientation';
+import { VideoPlayerContext } from '../context';
 
 type VideoPlayerProps = {
   sources: string[];
+  autoPlay?: boolean;
   isLooping?: boolean;
   videoFrameInterval?: number;
   videoFrame?: (url: string) => void;
   onFullScreenUpdate?: (isFullScreen: boolean) => void;
 };
 
-const FXVideoPlayer: React.FC<VideoPlayerProps> = (props) => {
+const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
+  autoPlay = true,
+  isLooping = true,
+  ...props
+}) => {
   const video = React.useRef<Video>(null);
   const player = useVideoPlayer(props.sources, video);
 
-  const [isLive, setIsLive] = React.useState<boolean>(false);
   const [isFullScreen, setIsFullScreen] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
-    setIsLive(
-      player.source.startsWith('rtmp://') || player.source.includes('.m3u8')
-    );
-  }, []);
 
   React.useEffect(() => {
     if (props.videoFrameInterval && props.videoFrameInterval > 0) {
@@ -42,44 +38,52 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = (props) => {
     return () => {};
   }, []);
 
+  const handleFullscreenUpdate = async () => {
+    await ScreenOrientation.lockAsync(
+      isFullScreen
+        ? ScreenOrientation.OrientationLock.PORTRAIT
+        : ScreenOrientation.OrientationLock.LANDSCAPE
+    );
+    setIsFullScreen(!isFullScreen);
+    props.onFullScreenUpdate && props.onFullScreenUpdate(!isFullScreen);
+    player.resetControlsTimeout();
+  };
+
   return (
     <VideoPlayerContext.Provider value={{ ...player }}>
       <Pressable
-        style={styles.container}
+        style={[
+          styles.container,
+          isFullScreen ? { height: '100%' } : { width: '100%' },
+        ]}
         onPress={() => player.playback && player.setShowControls(true)}
       >
         <Video
           ref={video}
-          shouldPlay
+          isLooping={isLooping}
           isMuted={player.isMuted}
+          shouldPlay={autoPlay}
           source={{ uri: player.source }}
           resizeMode={ResizeMode.CONTAIN}
           onLoad={player.handleVideoLoad}
-          isLooping={props.isLooping ?? true}
           onLoadStart={() => player.setIsLoading(true)}
-          onError={() => player.setError('An error occured.')}
+          onError={(error) => player.setError(error)}
           onPlaybackStatusUpdate={player.handlePlaybackStatusUpdate}
+          onFullscreenUpdate={handleFullscreenUpdate}
           style={styles.video}
         />
         <Controls
-          isLive={isLive}
           videoRef={video}
-          handleNextTrack={player.handleNextTrack}
-          handlePreviousTrack={player.handlePreviousTrack}
-          handleTogglePlay={player.togglePlayback}
-          handleReload={player.handleVideoReload}
-          handleSlidingStart={player.handleSlidingStart}
+          isLive={player.isLive}
           handleToggleMute={player.toggleMute}
+          handleReload={player.handleVideoReload}
+          handleNextTrack={player.handleNextTrack}
+          handleTogglePlay={player.togglePlayback}
+          handleFullScreen={handleFullscreenUpdate}
+          onValueChange={player.resetControlsTimeout}
+          handleSlidingStart={player.handleSlidingStart}
+          handlePreviousTrack={player.handlePreviousTrack}
           handleSlidingComplete={player.handleSlidingComplete}
-          handleFullScreen={async () => {
-            await ScreenOrientation.lockAsync(
-              isFullScreen
-                ? ScreenOrientation.OrientationLock.PORTRAIT
-                : ScreenOrientation.OrientationLock.LANDSCAPE
-            );
-            setIsFullScreen(true);
-            props.onFullScreenUpdate && props.onFullScreenUpdate(!isFullScreen);
-          }}
         />
       </Pressable>
     </VideoPlayerContext.Provider>
@@ -87,10 +91,14 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = (props) => {
 };
 
 const styles = StyleSheet.create({
-  container: { position: 'relative' },
+  container: {
+    position: 'relative',
+    aspectRatio: 16 / 9,
+  },
   video: {
     backgroundColor: 'black',
-    aspectRatio: 16 / 9,
+    width: '100%',
+    height: '100%',
   },
 });
 

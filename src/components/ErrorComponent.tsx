@@ -3,18 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { useVideoPlayerContext } from '../hooks/useVideoPlayerContext';
 
-type Props = {
-  onReload: () => void;
-};
-
-const ErrorComponent: React.FC<Props> = (props) => {
+const ErrorComponent: React.FC<{ onReload: () => void }> = (props) => {
   const player = useVideoPlayerContext();
 
   return (
     player.error && (
       <View style={styles.wrapper}>
         <View style={styles.container}>
-          <AntDesign name="warning" color="lightgrey" size={30} />
+          <AntDesign name="warning" color="lightgrey" size={25} />
           <Text style={styles.text}>{player.error}</Text>
           <TouchableOpacity style={styles.button} onPress={props.onReload}>
             <Text style={[styles.text, { marginHorizontal: 4 }]}>Reload</Text>
@@ -36,7 +32,7 @@ const styles = StyleSheet.create({
     zIndex: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.95)',
+    backgroundColor: 'rgba(0,0,0,0.9)',
   },
   container: { alignItems: 'center', maxWidth: 280 },
   text: {
