@@ -1,6 +1,6 @@
 {
   "name": "rn-fx-video-player",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A react native video player package based on expo-av",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
