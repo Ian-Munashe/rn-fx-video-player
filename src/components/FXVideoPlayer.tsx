@@ -45,7 +45,7 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
       return () => clearInterval(interval);
     }
     return () => {};
-  }, [props]);
+  }, []);
 
   const handleFullscreenUpdate = async () => {
     await ScreenOrientation.lockAsync(
