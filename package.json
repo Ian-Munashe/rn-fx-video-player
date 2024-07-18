@@ -57,9 +57,6 @@
     "url": "https://github.com/Ian-Munashe/rn-fx-video-player/issues"
   },
   "homepage": "https://github.com/Ian-Munashe/rn-fx-video-player#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "devDependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-native-community/slider": "^4.5.2",
@@ -103,16 +100,7 @@
       "<rootDir>/lib/"
     ]
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
     "npm": {
       "publish": true
     },
