@@ -6,30 +6,31 @@ import { Pressable, StyleSheet, BackHandler } from 'react-native';
 
 import Controls from './Controls';
 import { useVideoPlayer } from '../hooks';
-import { VideoPlayerContext } from '../context';
+import { PlayerContext } from '../context';
+import type { VideoPlayerProps } from '../types';
 
-type VideoPlayerProps = {
-  sources: string[];
-  autoPlay?: boolean;
-  isLooping?: boolean;
-  videoFrameInterval?: number;
-  videoFrame?: (url: string) => void;
-  onFullScreenUpdate?: (isFullScreen: boolean) => void;
-};
-
+/**
+ * Renders a video player component with fullscreen support.
+ *
+ * @param {boolean} [autoPlay=true] - Whether the video should automatically play on load.
+ * @param {boolean} [isLooping=true] - Whether the video should loop playback.
+ * @param {(string | string[])} sources - Array of video sources.
+ * @param {(string | undefined)} [onVideoFrame] - The callback for when a video frame is captured. This function return the captured frame url
+ * @param {(boolean | undefined)} [onFullScreenUpdate] - The callback for when the video player is in fullscreen or not.
+ */
 const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
   autoPlay = true,
   isLooping = true,
   ...props
-}) => {
+}: VideoPlayerProps): React.ReactElement => {
   const video = React.useRef<Video>(null);
   const player = useVideoPlayer(props.sources, video);
 
   const [fullScreen, setFullScreen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const action = () => {
-      if (fullScreen) handleFullscreenUpdate();
+    const action = (): boolean => {
+      if (fullScreen) toggleFullscreen();
       return fullScreen;
     };
     const handler = BackHandler.addEventListener('hardwareBackPress', action);
@@ -38,16 +39,16 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
 
   React.useEffect(() => {
     if (props.videoFrameInterval && props.videoFrameInterval > 0) {
-      const interval = setInterval(async () => {
+      const interval = setInterval(async (): Promise<void> => {
         const uri = await captureRef(video, { format: 'jpg' });
-        props.videoFrame && props.videoFrame(uri);
+        props.onVideoFrame && props.onVideoFrame(uri);
       }, props.videoFrameInterval);
       return () => clearInterval(interval);
     }
     return () => {};
   }, []);
 
-  const handleFullscreenUpdate = async () => {
+  const toggleFullscreen = async (): Promise<void> => {
     await ScreenOrientation.lockAsync(
       fullScreen
         ? ScreenOrientation.OrientationLock.PORTRAIT
@@ -59,7 +60,7 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   return (
-    <VideoPlayerContext.Provider value={{ ...player }}>
+    <PlayerContext.Provider value={{ ...player }}>
       <Pressable
         style={[styles.container, fullScreen ? styles.height : styles.width]}
         onPress={() => player.playback && player.setShowControls(true)}
@@ -73,9 +74,9 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
           resizeMode={ResizeMode.CONTAIN}
           onLoad={player.handleVideoLoad}
           onLoadStart={() => player.setIsLoading(true)}
-          onError={(error) => player.setError(error)}
+          onError={(error): void => player.setError(error)}
           onPlaybackStatusUpdate={player.handlePlaybackStatusUpdate}
-          onFullscreenUpdate={handleFullscreenUpdate}
+          onFullscreenUpdate={toggleFullscreen}
           style={styles.video}
         />
         <Controls
@@ -85,14 +86,14 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
           handleReload={player.handleVideoReload}
           handleNextTrack={player.handleNextTrack}
           handleTogglePlay={player.togglePlayback}
-          handleFullScreen={handleFullscreenUpdate}
+          handleFullScreen={toggleFullscreen}
           onValueChange={player.resetControlsTimeout}
           handleSlidingStart={player.handleSlidingStart}
           handlePreviousTrack={player.handlePreviousTrack}
           handleSlidingComplete={player.handleSlidingComplete}
         />
       </Pressable>
-    </VideoPlayerContext.Provider>
+    </PlayerContext.Provider>
   );
 };
 

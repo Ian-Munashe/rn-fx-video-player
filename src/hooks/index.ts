@@ -1,4 +1,5 @@
+import { useAmbient } from './useAmbient';
 import { useVideoPlayer } from './useVideoPlayer';
-import { useVideoPlayerContext } from './useVideoPlayerContext';
+import { usePlayerContext } from './usePlayerContext';
 
-export { useVideoPlayer, useVideoPlayerContext };
+export { useAmbient, useVideoPlayer, usePlayerContext };

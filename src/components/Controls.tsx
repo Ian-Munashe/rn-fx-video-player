@@ -12,9 +12,9 @@ import { Ionicons, MaterialIcons, Octicons } from '@expo/vector-icons';
 import Utils from '../utils';
 import IconButton from './IconButton';
 import ErrorComponent from './ErrorComponent';
-import { useVideoPlayerContext } from '../hooks/useVideoPlayerContext';
+import { usePlayerContext } from '../hooks';
 
-type PlayerControlsProps = {
+interface IPlayerControlsProps {
   isLive: boolean;
   videoRef: React.MutableRefObject<any>;
   handleNextTrack: () => void;
@@ -26,9 +26,24 @@ type PlayerControlsProps = {
   handlePreviousTrack: () => void;
   handleSlidingStart: () => void;
   handleSlidingComplete: (e: number, duration: number) => void;
-};
+}
 
-const Controls: React.FC<PlayerControlsProps> = (props) => {
+/**
+ * Renders the controls for the player.
+ *
+ * @param {boolean} props.isLive - Indicates if the video is live.
+ * @param {React.MutableRefObject<any>} props.videoRef - The reference to the video element.
+ * @param {() => void} props.handleNextTrack - The function to handle the next track event.
+ * @param {() => void} props.handleReload - The function to handle the reload event.
+ * @param {() => void} props.onValueChange - The function to handle the value change event.
+ * @param {() => void} props.handleToggleMute - The function to handle the toggle mute event.
+ * @param {() => void} props.handleTogglePlay - The function to handle the toggle play event.
+ * @param {() => void} props.handleFullScreen - The function to handle the full screen event.
+ * @param {() => void} props.handlePreviousTrack - The function to handle the previous track event.
+ * @param {() => void} props.handleSlidingStart - The function to handle the sliding start event.
+ * @param {(e: number, duration: number) => Promise<void>} props.handleSlidingComplete - The function to handle the sliding complete event.
+ */
+const Controls: React.FC<IPlayerControlsProps> = (props): JSX.Element => {
   const {
     isLoading,
     playback,
@@ -37,7 +52,7 @@ const Controls: React.FC<PlayerControlsProps> = (props) => {
     showControls,
     error,
     controlsAnimation,
-  } = useVideoPlayerContext();
+  } = usePlayerContext();
 
   return (
     <View style={styles.container}>
@@ -111,7 +126,13 @@ const Controls: React.FC<PlayerControlsProps> = (props) => {
   );
 };
 
-const renderRightControls = (handleFullScreen: () => void) => {
+/**
+ * Renders the right controls for the player, including the full screen button.
+ *
+ * @param handleFullScreen - The function to call when the full screen button is pressed.
+ * @returns The JSX element for the right controls.
+ */
+const renderRightControls = (handleFullScreen: () => void): JSX.Element => {
   return (
     <View style={styles.rightControlsContainer}>
       <IconButton
@@ -123,19 +144,29 @@ const renderRightControls = (handleFullScreen: () => void) => {
   );
 };
 
+/**
+ * Renders the left controls for the player, including the previous track, play, next track, and volume buttons.
+ *
+ * @param props.handlePreviousTrack - The function to call when the previous track button is pressed.
+ * @param props.handleTogglePlay - The function to call when the play button is pressed.
+ * @param props.handleNextTrack - The function to call when the next track button is pressed.
+ * @param props.handleToggleMute - The function to call when the mute button is pressed.
+ * @param isPlaying - Indicates if the player is currently playing.
+ * @param isMuted - Indicates if the player is currently muted.
+ */
 const renderLeftControls = (
-  props: PlayerControlsProps,
+  props: IPlayerControlsProps,
   isPlaying: boolean,
   isMuted: boolean
-) => {
+): JSX.Element => {
   const {
     handlePreviousTrack,
     handleTogglePlay,
     handleNextTrack,
     handleToggleMute,
   } = props;
-  const playButtonName = isPlaying ? 'pause-outline' : 'play-outline';
-  const volumeButtonName = isMuted
+  const playButtonName: string = isPlaying ? 'pause-outline' : 'play-outline';
+  const volumeButtonName: string = isMuted
     ? 'volume-mute-outline'
     : 'volume-high-outline';
 

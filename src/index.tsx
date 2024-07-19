@@ -1,1 +1,2 @@
-export { default as FXVideoPlayer } from './components/FXVideoPlayer';
+export { AmbientView } from './components';
+export { FXVideoPlayer } from './components';

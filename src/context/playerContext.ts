@@ -12,6 +12,4 @@ export type PlayerState = {
   playback: AVPlaybackStatusSuccess;
 };
 
-export const VideoPlayerContext = createContext<PlayerState | undefined>(
-  undefined
-);
+export const PlayerContext = createContext<PlayerState | undefined>(undefined);

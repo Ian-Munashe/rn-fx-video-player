@@ -1,7 +1,7 @@
 {
   "name": "rn-fx-video-player",
-  "version": "0.1.4",
-  "description": "A react native video player package based on expo-av",
+  "version": "0.1.5",
+  "description": "A react native video player based on expo-av with ambient mode that enhances user engagement, similar to the one found on YouTube. This feature allows you to create visually captivating backgrounds that seamlessly complement your video content, fostering a more immersive viewing experience for your users.",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -175,6 +175,7 @@
   },
   "dependencies": {
     "expo-av": "^14.0.6",
-    "expo-screen-orientation": "^7.0.5"
+    "expo-screen-orientation": "^7.0.5",
+    "react-native-crossfade-image": "^1.3.0"
   }
 }

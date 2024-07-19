@@ -1,24 +1,30 @@
 import { AntDesign } from '@expo/vector-icons';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { useVideoPlayerContext } from '../hooks/useVideoPlayerContext';
+import { usePlayerContext } from '../hooks';
 
-const ErrorComponent: React.FC<{ onReload: () => void }> = (props) => {
-  const player = useVideoPlayerContext();
+/**
+ * A component that displays an error message and a reload button.
+ * @param {Function} props.onReload - The function to call when the reload button is pressed.
+ */
+const ErrorComponent: React.FC<{ onReload: () => void }> = (
+  props
+): JSX.Element | null => {
+  const player = usePlayerContext();
+
+  if (!player.error) return null;
 
   return (
-    player.error && (
-      <View style={styles.wrapper}>
-        <View style={styles.container}>
-          <AntDesign name="warning" color="lightgrey" size={25} />
-          <Text style={styles.text}>{player.error}</Text>
-          <TouchableOpacity style={styles.button} onPress={props.onReload}>
-            <Text style={[styles.text, styles.marginHorizontal]}>Reload</Text>
-            <AntDesign name="reload1" color="white" size={12} />
-          </TouchableOpacity>
-        </View>
+    <View style={styles.wrapper}>
+      <View style={styles.container}>
+        <AntDesign name="warning" color="lightgrey" size={25} />
+        <Text style={styles.text}>{player.error}</Text>
+        <TouchableOpacity style={styles.button} onPress={props.onReload}>
+          <Text style={[styles.text, styles.marginHorizontal]}>Reload</Text>
+          <AntDesign name="reload1" color="white" size={12} />
+        </TouchableOpacity>
       </View>
-    )
+    </View>
   );
 };
 
