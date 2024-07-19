@@ -29,7 +29,7 @@ const AmbientView: React.FC<AmbientViewProps> = ({
   animationDelayMs = 0,
   isFullScreen = false,
   videoFrame = "https:www.ledr.com/colours/black.jpg",
-  colors = ["rgba(0,0,0,0.2)", "rgba(0,0,0,0.5)", "black"],
+  colors = ["rgba(0,0,0,0.2)", "rgba(0,0,0,0.5)", "rgba(0,0,0,1)"],
   ...props
 }: AmbientViewProps): JSX.Element => {
   const { imageOpacity, gradientOpacity } = useAmbient(animationDelayMs);
@@ -39,7 +39,7 @@ const AmbientView: React.FC<AmbientViewProps> = ({
     resizeMode: "cover",
     duration: 4000,
     blurRadius: 60,
-    style: { flex: 1 },
+    style: { width: "100%", height: "100%" },
   };
 
   const animatedViewStyle: ViewStyle = {
@@ -61,8 +61,10 @@ const AmbientView: React.FC<AmbientViewProps> = ({
         <LinearGradient colors={colors} style={{ flex: 1 }} />
       </Animated.View>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
-        {props.playerItem()}
-        {!isFullScreen && props.children}
+        <View style={[isFullScreen && { height: "100%" }]}>
+          {props.playerItem()}
+        </View>
+        {isFullScreen ? null : props.children}
       </View>
     </View>
   );

@@ -26,6 +26,14 @@ export const useFullScreen = (
 
   const [fullScreen, setFullScreen] = React.useState<boolean>(false);
 
+  React.useLayoutEffect(() => {
+    ScreenOrientation.getOrientationAsync().then((orientation) => {
+      const full = orientation === 4;
+      setFullScreen(full);
+      onFullScreenUpdateRef.current(full);
+    });
+  }, []);
+
   React.useEffect(() => {
     if (frameInterval && frameInterval > 0) {
       const interval = setInterval(async (): Promise<void> => {

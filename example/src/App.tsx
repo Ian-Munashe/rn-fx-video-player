@@ -1,13 +1,10 @@
 import React from "react";
-import { create } from "zustand";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AmbientView, FXVideoPlayer } from "rn-fx-video-player";
 
-const useFullScreenStore = create<{ fullScreen: boolean }>((_) => ({
-  fullScreen: false,
-}));
+import { useFullScreenStore } from "./store";
 
 export default function App() {
   const animationDelay = 15000;
@@ -34,14 +31,27 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar hidden={fullScreen} style="light" />
+
       <AmbientView
         videoFrame={frame}
         playerItem={playerItem}
         isFullScreen={fullScreen}
         animationDelayMs={animationDelay}
       >
-        <View style={{ height: 200 }} />
+        <View style={{ width: "100%", padding: 12 }}>
+          <Text style={{ color: "white" }}>Hello World</Text>
+          <Text style={{ color: "white" }}>Hello World</Text>
+          <Text style={{ color: "white" }}>Hello World</Text>
+          <Text style={{ color: "white" }}>Hello World</Text>
+        </View>
       </AmbientView>
+      <ScrollView style={{ flex: 1 }}>
+        {[...Array(60)].map((_, index) => (
+          <Text key={index} style={{ color: "white" }}>
+            Comments
+          </Text>
+        ))}
+      </ScrollView>
     </View>
   );
 }
