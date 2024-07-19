@@ -1,6 +1,6 @@
-import { createContext } from 'react';
-import { Animated } from 'react-native';
-import type { AVPlaybackStatusSuccess } from 'expo-av';
+import { createContext } from "react";
+import { Animated } from "react-native";
+import type { AVPlaybackStatusSuccess } from "expo-av";
 
 export type PlayerState = {
   isMuted: boolean;

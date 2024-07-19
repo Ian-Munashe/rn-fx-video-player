@@ -1,13 +1,11 @@
-import React from 'react';
-import { ResizeMode, Video } from 'expo-av';
-import { captureRef } from 'react-native-view-shot';
-import * as ScreenOrientation from 'expo-screen-orientation';
-import { Pressable, StyleSheet, BackHandler } from 'react-native';
+import React from "react";
+import { ResizeMode, Video } from "expo-av";
+import { Pressable, StyleSheet } from "react-native";
 
-import Controls from './Controls';
-import { useVideoPlayer } from '../hooks';
-import { PlayerContext } from '../context';
-import type { VideoPlayerProps } from '../types';
+import Controls from "./Controls";
+import { useFullScreen, useVideoPlayer } from "../hooks";
+import { PlayerContext } from "../context";
+import type { VideoPlayerProps } from "../types";
 
 /**
  * Renders a video player component with fullscreen support.
@@ -25,39 +23,12 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
 }: VideoPlayerProps): React.ReactElement => {
   const video = React.useRef<Video>(null);
   const player = useVideoPlayer(props.sources, video);
-
-  const [fullScreen, setFullScreen] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    const action = (): boolean => {
-      if (fullScreen) toggleFullscreen();
-      return fullScreen;
-    };
-    const handler = BackHandler.addEventListener('hardwareBackPress', action);
-    return () => handler.remove();
-  }, [fullScreen]);
-
-  React.useEffect(() => {
-    if (props.videoFrameInterval && props.videoFrameInterval > 0) {
-      const interval = setInterval(async (): Promise<void> => {
-        const uri = await captureRef(video, { format: 'jpg' });
-        props.onVideoFrame && props.onVideoFrame(uri);
-      }, props.videoFrameInterval);
-      return () => clearInterval(interval);
-    }
-    return () => {};
-  }, []);
-
-  const toggleFullscreen = async (): Promise<void> => {
-    await ScreenOrientation.lockAsync(
-      fullScreen
-        ? ScreenOrientation.OrientationLock.PORTRAIT
-        : ScreenOrientation.OrientationLock.LANDSCAPE
-    );
-    setFullScreen(!fullScreen);
-    props.onFullScreenUpdate && props.onFullScreenUpdate(!fullScreen);
-    player.resetControlsTimeout();
-  };
+  const { fullScreen, toggleFullscreenRef } = useFullScreen(video, {
+    frameInterval: props.videoFrameInterval ?? 0,
+    onVideoFrame: props.onVideoFrame,
+    onFullScreenUpdate: props.onFullScreenUpdate,
+    resetControlsTimeout: player.resetControlsTimeout,
+  });
 
   return (
     <PlayerContext.Provider value={{ ...player }}>
@@ -76,7 +47,6 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
           onLoadStart={() => player.setIsLoading(true)}
           onError={(error): void => player.setError(error)}
           onPlaybackStatusUpdate={player.handlePlaybackStatusUpdate}
-          onFullscreenUpdate={toggleFullscreen}
           style={styles.video}
         />
         <Controls
@@ -86,8 +56,8 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
           handleReload={player.handleVideoReload}
           handleNextTrack={player.handleNextTrack}
           handleTogglePlay={player.togglePlayback}
-          handleFullScreen={toggleFullscreen}
           onValueChange={player.resetControlsTimeout}
+          handleFullScreen={toggleFullscreenRef.current}
           handleSlidingStart={player.handleSlidingStart}
           handlePreviousTrack={player.handlePreviousTrack}
           handleSlidingComplete={player.handleSlidingComplete}
@@ -99,16 +69,16 @@ const FXVideoPlayer: React.FC<VideoPlayerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+    position: "relative",
     aspectRatio: 16 / 9,
   },
   video: {
-    backgroundColor: 'black',
-    width: '100%',
-    height: '100%',
+    backgroundColor: "black",
+    width: "100%",
+    height: "100%",
   },
-  height: { height: '100%' },
-  width: { width: '100%' },
+  height: { height: "100%" },
+  width: { width: "100%" },
 });
 
 export default FXVideoPlayer;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Animated, Easing } from 'react-native';
+import React from "react";
+import { Animated, Easing } from "react-native";
 
 export const useAmbient = (delay: number) => {
   const imageOpacity = React.useRef(new Animated.Value(0)).current;
@@ -24,7 +24,7 @@ export const useAmbient = (delay: number) => {
       animation.start(() => animation.stop());
     }, delay);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [delay, imageOpacity, gradientOpacity]);
 
   return { imageOpacity, gradientOpacity };
 };

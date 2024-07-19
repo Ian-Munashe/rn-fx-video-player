@@ -5,7 +5,7 @@ A react native video player based on expo-av with ambient mode that enhances use
 ## Installation
 
 ```sh
-npm install rn-fx-video-player
+npm install rn-fx-video-player expo-linear-gradient react-native-view-shot @expo/vector-icons @react-native-community/slider
 ```
 
 ## Usage

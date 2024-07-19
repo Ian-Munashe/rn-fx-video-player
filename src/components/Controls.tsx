@@ -4,15 +4,15 @@ import {
   Animated,
   StyleSheet,
   ActivityIndicator,
-} from 'react-native';
-import Slider from '@react-native-community/slider';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, MaterialIcons, Octicons } from '@expo/vector-icons';
+} from "react-native";
+import Slider from "@react-native-community/slider";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
 
-import Utils from '../utils';
-import IconButton from './IconButton';
-import ErrorComponent from './ErrorComponent';
-import { usePlayerContext } from '../hooks';
+import Utils from "../utils";
+import IconButton from "./IconButton";
+import ErrorComponent from "./ErrorComponent";
+import { usePlayerContext } from "../hooks";
 
 interface IPlayerControlsProps {
   isLive: boolean;
@@ -66,11 +66,11 @@ const Controls: React.FC<IPlayerControlsProps> = (props): JSX.Element => {
         >
           {showControls && (
             <LinearGradient
-              style={{ height: '100%', width: '100%' }}
+              style={{ height: "100%", width: "100%" }}
               colors={[
-                'transparent',
-                'rgba(0, 0, 0, 0.2)',
-                'rgba(0, 0, 0, 0.8)',
+                "transparent",
+                "rgba(0, 0, 0, 0.2)",
+                "rgba(0, 0, 0, 0.8)",
               ]}
             >
               <View style={styles.controlsContainer}>
@@ -79,9 +79,9 @@ const Controls: React.FC<IPlayerControlsProps> = (props): JSX.Element => {
                     value={playback.positionMillis / playback.durationMillis!}
                     minimumValue={0}
                     maximumValue={1}
-                    thumbTintColor={'white'}
+                    thumbTintColor={"white"}
                     minimumTrackTintColor="white"
-                    maximumTrackTintColor={'white'}
+                    maximumTrackTintColor={"white"}
                     onSlidingStart={props.handleSlidingStart}
                     onValueChange={props.onValueChange}
                     onSlidingComplete={async (e) =>
@@ -93,15 +93,15 @@ const Controls: React.FC<IPlayerControlsProps> = (props): JSX.Element => {
                   />
                 )}
                 <View style={styles.timerControlsContainer}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                     {renderLeftControls(props, isPlaying, isMuted)}
                     {props.isLive ? (
-                      <Text style={[styles.text, { fontWeight: 'bold' }]}>
+                      <Text style={[styles.text, { fontWeight: "bold" }]}>
                         LIVE
                       </Text>
                     ) : (
                       <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        style={{ flexDirection: "row", alignItems: "center" }}
                       >
                         <Text style={styles.text}>
                           {Utils.formatTime(playback.positionMillis)}
@@ -165,10 +165,10 @@ const renderLeftControls = (
     handleNextTrack,
     handleToggleMute,
   } = props;
-  const playButtonName: string = isPlaying ? 'pause-outline' : 'play-outline';
+  const playButtonName: string = isPlaying ? "pause-outline" : "play-outline";
   const volumeButtonName: string = isMuted
-    ? 'volume-mute-outline'
-    : 'volume-high-outline';
+    ? "volume-mute-outline"
+    : "volume-high-outline";
 
   return (
     <View style={styles.leftControlsContainer}>
@@ -206,34 +206,34 @@ const renderLeftControls = (
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   controlsContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   rightControlsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   leftControlsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginRight: 12,
   },
   timerControlsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingVertical: 2,
     paddingHorizontal: 4,
     paddingBottom: 8,
   },
   text: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
   },
 });

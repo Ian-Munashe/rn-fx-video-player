@@ -1,7 +1,7 @@
 {
   "name": "rn-fx-video-player",
   "version": "0.1.5",
-  "description": "A react native video player based on expo-av with ambient mode that enhances user engagement, similar to the one found on YouTube. This feature allows you to create visually captivating backgrounds that seamlessly complement your video content, fostering a more immersive viewing experience for your users.",
+  "description": "A custom expo video player based on expo-av with ambient mode that enhances user engagement, similar to the one found on YouTube. This feature allows you to create visually captivating backgrounds that seamlessly complement your video content, fostering a more immersive viewing experience for your users.",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -121,15 +121,16 @@
     ],
     "rules": {
       "react/react-in-jsx-scope": "off",
+      "react-native/no-inline-styles": "off",
       "prettier/prettier": [
         "error",
         {
           "quoteProps": "consistent",
-          "singleQuote": true,
+          "singleQuote": false,
           "tabWidth": 2,
           "trailingComma": "es5",
           "useTabs": false,
-          "endOfLine": "lf"
+          "endOfLine": "auto"
         }
       ]
     }
@@ -140,10 +141,11 @@
   ],
   "prettier": {
     "quoteProps": "consistent",
-    "singleQuote": true,
+    "singleQuote": false,
     "tabWidth": 2,
     "trailingComma": "es5",
-    "useTabs": false
+    "useTabs": false,
+    "endOfLine": "auto"
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -164,7 +166,8 @@
       [
         "typescript",
         {
-          "project": "tsconfig.build.json"
+          "project": "tsconfig.build.json",
+          "tsc": "node_modules/typescript/bin/tsc"
         }
       ]
     ]
@@ -175,7 +178,6 @@
   },
   "dependencies": {
     "expo-av": "^14.0.6",
-    "expo-screen-orientation": "^7.0.5",
-    "react-native-crossfade-image": "^1.3.0"
+    "expo-screen-orientation": "^7.0.5"
   }
 }

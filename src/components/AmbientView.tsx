@@ -1,12 +1,12 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { View, Animated, type ViewStyle } from 'react-native';
+import { LinearGradient } from "expo-linear-gradient";
+import { View, Animated, type ViewStyle } from "react-native";
 import {
-  CrossfadeImage,
-  type CrossfadeImageProps,
-} from 'react-native-crossfade-image';
+  FXCrossfadeImage,
+  type FXCrossfadeImageProps,
+} from "./FXCrossfadeImage";
 
-import { useAmbient } from '../hooks';
-import type { AmbientViewProps } from '../types';
+import { useAmbient } from "../hooks";
+import type { AmbientViewProps } from "../types";
 
 /**
  * Renders an ambient view component with a crossfade image and linear gradient.
@@ -28,22 +28,22 @@ import type { AmbientViewProps } from '../types';
 const AmbientView: React.FC<AmbientViewProps> = ({
   animationDelayMs = 0,
   isFullScreen = false,
-  videoFrame = 'https:www.ledr.com/colours/black.jpg',
-  colors = ['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)', 'black'],
+  videoFrame = "https:www.ledr.com/colours/black.jpg",
+  colors = ["rgba(0,0,0,0.2)", "rgba(0,0,0,0.5)", "black"],
   ...props
 }: AmbientViewProps): JSX.Element => {
   const { imageOpacity, gradientOpacity } = useAmbient(animationDelayMs);
 
-  const imageProps: CrossfadeImageProps = {
+  const imageProps: FXCrossfadeImageProps = {
     source: { uri: videoFrame },
-    resizeMode: 'cover',
+    resizeMode: "cover",
     duration: 4000,
     blurRadius: 60,
     style: { flex: 1 },
   };
 
   const animatedViewStyle: ViewStyle = {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
@@ -52,15 +52,15 @@ const AmbientView: React.FC<AmbientViewProps> = ({
 
   return (
     <View
-      style={[{ position: 'relative' }, isFullScreen && { height: '100%' }]}
+      style={[{ position: "relative" }, isFullScreen && { height: "100%" }]}
     >
       <Animated.View style={[animatedViewStyle, { opacity: imageOpacity }]}>
-        <CrossfadeImage {...imageProps} />
+        <FXCrossfadeImage {...imageProps} />
       </Animated.View>
       <Animated.View style={[animatedViewStyle, { opacity: gradientOpacity }]}>
         <LinearGradient colors={colors} style={{ flex: 1 }} />
       </Animated.View>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
         {props.playerItem()}
         {!isFullScreen && props.children}
       </View>

@@ -3,9 +3,9 @@ import {
   TouchableOpacity,
   type StyleProp,
   type ViewStyle,
-} from 'react-native';
-import React from 'react';
-import type { Icon } from '@expo/vector-icons/build/createIconSet';
+} from "react-native";
+import React from "react";
+import type { Icon } from "@expo/vector-icons/build/createIconSet";
 
 type Props = {
   name: string;
@@ -29,8 +29,8 @@ const IconButton: React.FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 28,
     height: 28,
   },
